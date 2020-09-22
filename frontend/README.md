@@ -9,13 +9,196 @@ In the project directory, you can run:
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
 
 ### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+
+# TDD :  Test driven Development
+
+```
+npx create-react-app my-app // template-typescript
+
+yarn add enzyme enzyme-adapter-react-16 --save
+```
+
+## 1. App.test.tsx
+
+https://enzymejs.github.io/enzyme/docs/installation/react-16.html
+
+```
+import React from 'react';
+import { render } from '@testing-library/react';
+import App from './App';
+
+// setup file
+import { configure, shallow } from 'enzyme';//shallow
+import Adapter from 'enzyme-adapter-react-16';
+
+configure({ adapter: new Adapter() });
+
+describe("Counter Testing", () => {
+
+  test('renders learn react link', () => {
+    const { getByText } = render(<App />);// you load the component < App />
+    const linkElement = getByText("conversion USD - EUR");// you said that the document contains this string
+    expect(linkElement).toBeInTheDocument(); // you are checking that string exists great ! OK
+  });
+})  
+```
+## 2.1 Shallow
+it creates an instance of the component
+
+Exemple with App  already written :
+
+```
+import React from 'react';
+import { render } from '@testing-library/react';
+import App from './App';
+
+// setup file
+import { configure, shallow } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+configure({ adapter: new Adapter() });
+
+describe("Counter Testing", () => {
+
+  test('renders learn react link', () => {
+    const wrapper = shallow(<App />); // it will render the component App, not the sub component inside like Layout for example
+    console.log("debug : WRAPPER ==>  ", wrapper.debug());
+    expect(wrapper.find("h1").text()).toContain("conversion rate : $ USD - € EUR");
+  });
+})  
+
+```
+it works with this
+```
+import React from 'react';
+import './App.css';
+import { convert } from './components/utils/Currency';
+import Button from './components/button/Button'
+
+function App() {
+  const [conversion, setConversion] = React.useState<string>("");
+
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const result: string = await convert("USD", "EUR")
+      setConversion(result);
+    }
+    (fetchData());
+  }, [])
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>conversion rate : $ USD - € EUR</h1>
+        <h3>{conversion ? conversion : ''}</h3>
+        <h2>counter</h2>
+        <Button label="click me please"></Button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to reload.
+        </p>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
+```
+ 
+
+now TDD :
+
+```
+
+describe("Counter Testing", () => {
+
+  test('renders learn react link', () => {
+    const wrapper = shallow(<App />); // it will render the component App, not the sub component inside like Layout for example
+    console.log("debug : WRAPPER ==>  ", wrapper.debug());
+    expect(wrapper.find("h1").text()).toContain("conversion rate : $ USD - € EUR");
+  });
+
+  // test rendering a button
+  test('implement a button with a text', () => {
+    const wrapper = shallow(<App />);
+    expect(wrapper.find("#increment-btn").text()).toBe('Increment ');
+  })
+})  
+```
+
+## 2.2. test will fail , because we have to create the component => TDD
+
+The component doesn't exist, so let's create this
+
+```
+
+  ● Counter Testing › implement a button with a text
+
+    Method “text” is meant to be run on 1 node. 0 found instead.
+
+      23 |   test('implement a button with a text', () => {
+      24 |     const wrapper = shallow(<App />);
+    > 25 |     expect(wrapper.find("#increment-btn").text()).toBe('Increment ');
+         |                                           ^
+      26 |   })
+      27 | })  
+      28 | 
+
+      at ShallowWrapper.single (node_modules/enzyme/src/ShallowWrapper.js:1652:13)
+      at ShallowWrapper.text (node_modules/enzyme/src/ShallowWrapper.js:1093:17)
+      at Object.<anonymous> (src/App.test.tsx:25:43)
+
+Test Suites: 1 failed, 1 passed, 2 total
+Tests:       1 failed, 2 passed, 3 total
+Snapshots:   0 total
+```
+
+Here we go
+```
+ return (
+    <div className="App">
+      <header className="App-header">
+        <h1>conversion rate : $ USD - € EUR</h1>
+        <h3>{conversion ? conversion : ''}</h3>  
+        <h2>counter</h2>
+        <Button label="click me please"></Button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to reload.
+        </p>
+      </header>
+      <button id="increment-btn">Increment</button> /////////////// HERE //////////////
+    </div>
+  );
+```
+
+
+### 2.3 UseState, value of a state
+
+you can use a global wrapper instead of create it every time
+
+```
+  let wrapper: any;
+  beforeEach(() => {
+    wrapper = shallow(<App />);
+    //  const wrapper = shallow(<App />); // it will render the component App, not the sub component inside like Layout for example
+  })
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -305,6 +488,46 @@ create a snapshot of the dom then compare it, you can update it : W + U in the t
 
 
 
+### 3. MOCK : working
+
+install ``
+
+```
+yarn add jest-fetch-mock
+```
+
+add this in setupTest.tsx
+```
+// jest-dom adds custom jest matchers for asserting on DOM nodes.
+// allows you to do things like:
+// expect(element).toHaveTextContent(/react/i)
+// learn more: https://github.com/testing-library/jest-dom
+import '@testing-library/jest-dom/extend-expect';
+// import fetchMock from 'jest-fetch-mock/types';
+// import fetchMock from "fetch-jest-mock";
+// global.fetch = require('jest-fetch-mock');
+import fetchMock from "jest-fetch-mock"
+fetchMock.enableMocks();
+```
+
+```
+import { convert } from "../Currency";
+import fetch from 'jest-fetch-mock';
+
+beforeEach(() => {
+  fetch.resetMocks();
+});
+
+it("finds exchange", async () => {
+  // we are faking the answer of the fetch doing this : fetch.mockResponse(... the result) ! JSON stringify is important
+  fetch.mockResponseOnce(JSON.stringify({ rates: { CAD: 1.42 } }));
+
+  const rate = await convert("USD", "CAD");
+
+  expect(rate).toEqual(1.42);
+  expect(fetch).toHaveBeenCalledTimes(1);
+});
+```
 
 
 ### `yarn build`

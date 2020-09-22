@@ -2,8 +2,34 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
-  // const { getByText } = render(<App />);
-  // const linkElement = getByText(/learn react/i);
-  // expect(linkElement).toBeInTheDocument();
-});
+// setup file
+import { configure, shallow } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+configure({ adapter: new Adapter() });
+
+describe("Counter Testing", () => {
+
+  let wrapper: any;
+  beforeEach(() => {
+    wrapper = shallow(<App />);
+    //  const wrapper = shallow(<App />); // it will render the component App, not the sub component inside like Layout for example
+  })
+
+  test('renders learn react link', () => {
+    console.log("debug : WRAPPER ==>  ", wrapper.debug());
+    expect(wrapper.find("h1").text()).toContain("conversion rate : $ USD - € EUR");
+    // const { getByText } = render(<App />);// you load the component < App />
+    // const linkElement = getByText("conversion rate : $ USD - € EUR");// you said that the document contains this string
+    // expect(linkElement).toBeInTheDocument(); // you are checking that string exists great ! OK
+  });
+
+  // test rendering a button
+  test('implement a button with a text', () => {
+    expect(wrapper.find("#increment-btn").text()).toBe('Increment ');
+  })
+
+  test('check the initial state value of a div ', () => {
+
+  })
+})  

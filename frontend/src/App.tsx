@@ -17,13 +17,15 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>conversion USD - EUR</h1>
-        <h2>{conversion ? conversion : ''}</h2>
+        <h1>conversion rate : $ USD - € EUR</h1>
+        <h3>{conversion ? conversion : ''}</h3>
+        <h2>counter</h2>
         <Button label="click me please"></Button>
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
       </header>
+      <button id="increment-btn">Increment</button>
     </div>
   );
 }
