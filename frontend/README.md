@@ -109,7 +109,18 @@ function App() {
 export default App;
 
 ```
- 
+ ### setupTest.tsx
+```
+import '@testing-library/jest-dom/extend-expect';
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+configure({ adapter: new Adapter() });
+
+import fetchMock from "jest-fetch-mock"
+fetchMock.enableMocks();
+
+```
+
 
 now TDD :
 
@@ -266,13 +277,99 @@ let's do it
   <div id="counter-value">{counter}</div>
 ```
 
+### 2.3.1 but if we don't wand counter < 0
+
+```
+  test("it will counter let the counter to 0 when decrement and it's < 0", () => {
+    wrapper.find("#decrement-btn").simulate("click");
+    expect(wrapper.find("#counter-value").text()).toBe("0");
+  })
+```
+
+solution : 
+```
+<button id="decrement-btn" style={{ border: "1px solid yellow", borderRadius: "8px", padding: "3px 3px" }}
+          onClick={() => setCounter(counter > 0 ? counter - 1 : 0)}>Decrement</button>
+   
+```
 
 
+### 3. refactoring , using a component
+
+Now, we putting all the counter in a component <Counter />
 
 
+```
+import React from 'react';
+import './App.css';
+import Counter from './components/Counter/Counter';
 
+function App() {
+  const [conversion, setConversion] = React.useState<string>("");
+  const [counter, setCounter] = React.useState<number>(0);
+  return (
+    <div className="App">
+      <Counter />
+    </div>
+  );
+}
 
+export default App;
+```
 
+to pass the test, just change the shallow
+
+App.test.tsx
+```
+import React from 'react';
+import { render } from '@testing-library/react';
+import Counter from './component/Counter/Counter';
+import { shallow } from 'enzyme';
+
+describe("Counter Testing", () => {
+
+  let wrapper: any;
+  beforeEach(() => {
+    wrapper = shallow(<Counter />);
+  })
+
+  test('renders learn react link', () => {
+    console.log("debug : WRAPPER ==>  ", wrapper.debug());
+    expect(wrapper.find("h1").text()).toContain("conversion rate : $ USD - € EUR");
+    // const { getByText } = render(<App />);// you load the component < App />
+    // const linkElement = getByText("conversion rate : $ USD - € EUR");// you said that the document contains this string
+    // expect(linkElement).toBeInTheDocument(); // you are checking that string exists great ! OK
+  });
+
+  // test rendering a button
+  test('implement a button with a text', () => {
+    expect(wrapper.find("#increment-btn").text()).toBe('Increment');
+  })
+
+  test('check the initial state value of a div ', () => {
+    expect(wrapper.find("#counter-value").text()).toBe("0");
+  })
+
+  test('it will render the click and increment the value', () => {
+    wrapper.find("#increment-btn").simulate("click");// simulating th click on the button
+    expect(wrapper.find("#counter-value").text()).toBe("1");
+  })
+
+  // test('it will render the click increment and decrement the value', () => {
+  //   wrapper.find("#increment-btn").simulate("click");// simulating th click on the button
+  //   expect(wrapper.find("#counter-value").text()).toBe("1");
+  //   wrapper.find("#decrement-btn").simulate("click");// simulating th click on the button
+  //   expect(wrapper.find("#counter-value").text()).toBe("0");
+  // })
+
+  test("it will counter let the counter to 0 when decrement and it's < 0", () => {
+    wrapper.find("#decrement-btn").simulate("click");
+    expect(wrapper.find("#counter-value").text()).toBe("0");
+  })
+
+})  
+
+```
 
 
 

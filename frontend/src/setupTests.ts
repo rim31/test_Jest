@@ -6,5 +6,9 @@ import '@testing-library/jest-dom/extend-expect';
 // import fetchMock from 'jest-fetch-mock/types';
 // import fetchMock from "fetch-jest-mock";
 // global.fetch = require('jest-fetch-mock');
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+configure({ adapter: new Adapter() });
+
 import fetchMock from "jest-fetch-mock"
 fetchMock.enableMocks();

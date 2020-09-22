@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import App from './App';
+import Counter from '../Counter';
 
 // setup file
 import { shallow } from 'enzyme';
@@ -12,16 +12,12 @@ describe("Counter Testing", () => {
 
   let wrapper: any;
   beforeEach(() => {
-    wrapper = shallow(<App />);
-    //  const wrapper = shallow(<App />); // it will render the component App, not the sub component inside like Layout for example
+    wrapper = shallow(<Counter />);
   })
 
   test('renders learn react link', () => {
-    // console.log("debug : WRAPPER ==>  ", wrapper);
-    expect(wrapper.find("h1").text()).toContain("conversion rate : $ USD - € EUR");
-    // const { getByText } = render(<App />);// you load the component < App />
-    // const linkElement = getByText("conversion rate : $ USD - € EUR");// you said that the document contains this string
-    // expect(linkElement).toBeInTheDocument(); // you are checking that string exists great ! OK
+    // console.log("debug : WRAPPER ==>  ", wrapper.debug());
+    expect(wrapper.find("h1").text()).toContain("Counter");
   });
 
   // test rendering a button
@@ -37,13 +33,6 @@ describe("Counter Testing", () => {
     wrapper.find("#increment-btn").simulate("click");// simulating th click on the button
     expect(wrapper.find("#counter-value").text()).toBe("1");
   })
-
-  // test('it will render the click increment and decrement the value', () => {
-  //   wrapper.find("#increment-btn").simulate("click");// simulating th click on the button
-  //   expect(wrapper.find("#counter-value").text()).toBe("1");
-  //   wrapper.find("#decrement-btn").simulate("click");// simulating th click on the button
-  //   expect(wrapper.find("#counter-value").text()).toBe("0");
-  // })
 
   test("it will counter let the counter to 0 when decrement and it's < 0", () => {
     wrapper.find("#decrement-btn").simulate("click");
