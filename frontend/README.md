@@ -372,6 +372,13 @@ describe("Counter Testing", () => {
 ```
 
 
+OR other solution if you want to kee the Shallow(<App />)
+
+use mount instead of shallow :
+
+import { mount } from 'enzyme';
+
+
 
 
 
