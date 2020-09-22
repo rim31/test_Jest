@@ -5,7 +5,7 @@ import Button from './components/button/Button'
 
 function App() {
   const [conversion, setConversion] = React.useState<string>("");
-
+  const [counter, setCounter] = React.useState<number>(0);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -24,8 +24,12 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <button id="increment-btn" style={{ border: "1px solid yellow", borderRadius: "8px", padding: "3px 3px" }}
+          onClick={() => setCounter(counter + 1)}>Increment</button>
+        <button id="decrement-btn" style={{ border: "1px solid yellow", borderRadius: "8px", padding: "3px 3px" }}
+          onClick={() => setCounter(counter - 1)}>Decrement</button>
+        <div id="counter-value">{counter}</div>
       </header>
-      <button id="increment-btn">Increment</button>
     </div>
   );
 }

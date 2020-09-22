@@ -189,8 +189,82 @@ you can use a global wrapper instead of create it every time
   })
 ```
 
+### 2.3.1 the test
+```
+  test('check the initial state value of a div ', () => {
+    expect(wrapper.find("#counter-value").text()).toBe(0);
+  })
+```
+
+Now create the component to pass the test
+```
+  const [counter, setCounter] = React.useState<number>(0);
+
+  <div id="counter-value">{counter}</div>
+```
+
+but it doesn't pass the test, you have to modify it
+```
+    expect(wrapper.find("#counter-value").text()).toBe("0");//////////// HERE String
+```
+
+### 2.2.3 Incrementation onClick
+
+write the test first: 
+https://enzymejs.github.io/enzyme/docs/api/shallow.html
+ click event :
+
+```
+   test('it will render the click and increment the value', () => {
+    wrapper.find("#increment-btn").simulate("click");// simulating th click on the button
+    expect(wrapper.find("#counter-value").text()).toBe("1");
+  }) 
+```
 
 
+```
+   expect(received).toBe(expected) // Object.is equality
+
+    Expected: "1"
+    Received: "0"
+
+      36 |   test('it will render the click and increment the value', () => {
+      37 |     wrapper.find("#increment-btn").simulate("click");// simulating th click on the button
+    > 38 |     expect(wrapper.find("#counter-value").text()).toBe("1");
+         |                                                   ^
+      39 |   })
+      40 | })  
+      41 | 
+
+```
+
+let's do it
+```
+        <button id="increment-btn" style={{ border: "1px solid yellow", borderRadius: "8px", padding: "3px 3px" }}
+          onClick={() => setCounter(counter + 1)}>Increment</button> ///////// HERE ////////
+        <div id="counter-value">{counter}</div>
+```
+
+It's work easily :-)
+
+### another one to validate the TDD
+
+```
+  test('it will render the click and decrement the value', () => {
+    wrapper.find("#increment-btn").simulate("click");// simulating th click on the button
+    expect(wrapper.find("#counter-value").text()).toBe("1");
+    wrapper.find("#decrement-btn").simulate("click");// simulating th click on the button
+    expect(wrapper.find("#counter-value").text()).toBe("0");
+  })
+```
+let's do it
+```
+  <button id="increment-btn" style={{ border: "1px solid yellow", borderRadius: "8px", padding: "3px 3px" }}
+    onClick={() => setCounter(counter + 1)}>Increment</button>
+  <button id="decrement-btn" style={{ border: "1px solid yellow", borderRadius: "8px", padding: "3px 3px" }}
+    onClick={() => setCounter(counter - 1)}>Decrement</button>
+  <div id="counter-value">{counter}</div>
+```
 
 
 
