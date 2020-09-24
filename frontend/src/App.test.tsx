@@ -26,7 +26,11 @@ describe("Counter Testing", () => {
 
   // test rendering a button
   test('implement a button with a text', () => {
-    expect(wrapper.find("#increment-btn").text()).toBe('Increment');
+    expect(wrapper.find("#increment-btn").text()).toBe('+ Increment');
+  })
+
+  test('implement a button with a text', () => {
+    expect(wrapper.find("#decrement-btn").text()).toBe('- Decrement');
   })
 
   test('check the initial state value of a div ', () => {
